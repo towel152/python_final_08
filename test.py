@@ -1,22 +1,13 @@
-import csv
-filename = "強盜.csv"
-with open(filename, encoding='utf-8') as fp:
-    dataread = csv.DictReader(fp)
-    data = [dict(d) for d in dataread]
-for item in data:
-    print("新北市 " + "{} {}".format(
-        item['\ufeff強盜概況'].split("/")[0],
-        item['新北市 '],
-    ))
-# print(data)
+import requests
+import json
+url = "https://opendata.hccg.gov.tw/OpenDataFileHit.ashx?ID=48DEDBDAC3A31FC6&u=77DFE16E459DFCE3F5CEA2F931E333F7E23D5729EF83D5F20744125E844FB27044F9892E6F09372518441B3BB84260426ADE242A57DFB9E8C9A50C50134F4F47"
 
-# {'\ufeff強盜概況': '111年 11月/ 發生數(件) ', 
-#  '新北市 ': '0', 
-#  '臺北縣 ': '0', 
-#  '臺北市 ': '2', 
-#  '桃園市 ': '0', 
-#  '臺中市 ': '0', 
-#  '臺南市 ': '0', '高雄市 ': '0', '宜蘭縣 ': '0', '新竹縣 ': '0', '苗栗縣 ': '1', '彰化縣 ': '1', '南投縣 ': '0', '雲林縣 ': '0', '嘉義縣 
-# ': '0', '屏東縣 ': '0', '臺東縣 ': '0', '花蓮縣 ': '0', '澎湖縣 ': '0', '基隆市 ': '0', '新竹市 ': '0', '嘉義市 ': '1', '金門縣 ': '0', '連
-#  '0', '屏東縣 ': '1', '臺東縣 ': '1', '花蓮縣 ': '0', '澎湖縣 ': '1', '基隆市 ': '0', '新竹市 ': '0', '嘉義市 ': '0', '金門縣 ': '0', '連江
-# 縣 ': '0'}
+r = requests.get(url)
+data = json.loads(r.text)
+print(data["updated_at"])
+bicycle_data = data["retVal"]
+for item in bicycle_data:
+    print("{}:{}/{}".format(
+        item['sna'].split("_")[1], 
+        item['sbi'], 
+        item['tot']))
