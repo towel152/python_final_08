@@ -1,11 +1,23 @@
 from django.db import models
 
-class happenData(models.Model):
+class populationData(models.Model):
+    population_id = models.IntegerField(primary_key=True)
+    year = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
-    mouth = models.CharField(max_length=100)
-    category = models.CharField(max_length=100)
-    number = models.IntegerField(default=0)
+    Dist = models.CharField(max_length=100)
+    quantity = models.IntegerField(default=0)
     class Meta:
-        ordering = ('-sbi',)
+        ordering = ('-year',)
     def __str__(self):
-        return self.sna
+        return self.population_id
+    
+# class populationData(models.Model):
+#     year = models.CharField(max_length=100)
+#     city = models.CharField(max_length=100)
+#     category = models.CharField(max_length=100)
+#     quantity = models.IntegerField(default=0)
+#     cleared = models.IntegerField(default=0)
+#     class Meta:
+#         ordering = ('-sbi',)
+#     def __str__(self):
+#         return self.sna
