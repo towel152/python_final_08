@@ -6,22 +6,43 @@ import random
 
 
 def index(request):
-    mynames = ["全國治安事件", "全台治安事件", "治安事件"]
-    myname = random.choice(mynames)
     return render(request, "index.html", locals())
 
+def home(request):
+    return render(request, "home.html", locals())
+
+def about(request):
+    return render(request, "about.html", locals())
+
 def people(request):
-    filename = "C:\python_final_08\python_final_08\people.csv"
-    with open(filename, encoding='utf-8') as fp:
-        dataread = csv.DictReader(fp)
-        data = [dict(d) for d in dataread]
-    msg = ''
-    for item in data:
-        msg = msg + "{}:{}:{}\n".format(
-            item['\ufeffstatistic_yyy'],
-            item['site_id'],
-            item['people_total']
-        )
-    
-    
-    return HttpResponse(msg)
+    models.crimeData.objects.all().delete()  
+    # filename = "C:\python_final_08\python_final_08\people.csv"
+    # with open(filename, encoding='utf-8') as fp:
+    #     dataread = csv.DictReader(fp)
+    #     data = [dict(d) for d in dataread]
+    # for item in data:
+    #     new_record = models.populationData(
+    #         year = int(item['\ufeffstatistic_yyy']),
+    #         city = item['site_id'].split(' ')[0],
+    #         dist = item['site_id'].split(' ')[1],
+    #         quantity = int(item['people_total'])
+    #     )
+    #     new_record.save()
+
+    # filename = "C:\python_final_08\python_final_08\犯罪資訊.csv"
+    # with open(filename, encoding='utf-8') as fp:
+    #     dataread = csv.DictReader(fp)
+    #     data = [dict(d) for d in dataread]
+    # for item in data:
+    #     new_record = models.crimeData(
+    #         year = item['年份'],
+    #         month = item['月份'],
+    #         city = item['縣市'],
+    #         category = item['類別'],
+    #         quantity = item['發生數'],
+    #         cleard = item['破獲數']
+    #     )
+    #     new_record.save()
+
+    data = models.populationData.objects.all()
+    return render(request, "dbtest.html", locals())
