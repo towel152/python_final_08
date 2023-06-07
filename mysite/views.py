@@ -12,7 +12,25 @@ def home(request):
     return render(request, "home.html", locals())
 
 def about(request):
+    # filename = "C:\python_final_08\python_final_08\犯罪資訊.csv"
+    # with open(filename, encoding='utf-8') as fp:
+    #     dataread = csv.DictReader(fp)
+    #     data = [dict(d) for d in dataread]
+    # for item in data:
+    #     new_record = models.crimeData(
+    #         year = item['年份'],
+    #         month = item['月份'],
+    #         city = item['縣市'],
+    #         category = item['類別'],
+    #         quantity = item['發生數'],
+    #         cleard = item['破獲數']
+    #     )
+    #     new_record.save()
     return render(request, "about.html", locals())
+
+def news(request):
+    data = models.news.objects.all()
+    return render(request, "news.html", locals())
 
 def people(request):
     models.crimeData.objects.all().delete()  

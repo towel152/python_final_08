@@ -22,6 +22,7 @@ urlpatterns = [
     path('', views.index),      # 設定執行首頁顯示的功能由index函式負責
     path('home/', views.home),
     path('about/', views.about),
+    path('news', views.news),
     path('dbtest/', views.people),
     path('admin/', admin.site.urls),
 ]
