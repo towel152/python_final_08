@@ -157,7 +157,7 @@
             {
               label: '{{ selected_city_2 }} 犯罪發生率',
               data: [
-                {% for item in data %}
+                {% for item in data2 %}
                 {{ item.crime_rate_2 }},
                 {% endfor %}
               ],
@@ -177,7 +177,7 @@
             {
               label: '{{ selected_city_2 }} 破獲率',
               data: [
-                {% for item in data  %}
+                {% for item in data2  %}
                 {{ item.clearance_rate_2 }},
                 {% endfor %}
               ],
