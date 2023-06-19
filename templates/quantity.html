@@ -71,7 +71,7 @@
         height: 350px;
         margin-top: 40px;
         display: inline-block;
-        margin-left: 500px; /* 將margin-left設為選單的寬度，以將圖表向右移動 */
+        margin-left: 250px; /* 將margin-left設為選單的寬度，以將圖表向右移動 */
       }
 
       .contentContent {
@@ -106,15 +106,68 @@
     </div>
     
     <div class="right">
-      <div class="buttonGap"> 
-        <a class="btn btn-success" href="/quantity">犯罪數與破獲數統計</a>
-      </div>
-      <div class="buttonGap"> 
-        <a class="btn btn-danger" href="/crimerate">犯罪率與破獲率統計</a>
-      </div>
-      <div class="buttonGap"> 
-        <a class="btn btn-warning" href="/compare">縣市比較</a>
-      </div>
+        <form method="GET" action="{% url 'quantity' %}">
+            <select name="year">
+              <option value="">全部年份</option>
+              {% for year in years %}
+              <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+              {% endfor %}
+            </select>
+            <select name="city">
+              <option value="">全部縣市</option>
+              {% for city in cities %}
+              <option value="{{ city.city }}" {% if city.city == selected_city %}selected{% endif %}>{{ city.city }}</option>
+              {% endfor %}
+            </select>
+            <input type="submit" value="篩選">
+          </form>
+          
+          <div>
+            <canvas id="myChart" width="800" height="300"></canvas>
+          </div>
+          
+          <script>
+            const ctx = document.getElementById('myChart');
+          
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                    {% for item in data %}
+                    '{{ item.category }}',
+                    {% endfor %}
+                    ],
+                    datasets: [{
+                    label: '犯罪發生數',
+                    data: [
+                        {% for item in data %}
+                        {{ item.quantity }},
+                        {% endfor %}
+                    ],
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)', // 第一個數據集的顏色
+                    borderWidth: 1
+                    }, {
+                    label: '破獲數',
+                    data: [
+                        {% for item in data %}
+                        {{ item.cleard }},
+                        {% endfor %}
+                    ],
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)', // 第二個數據集的顏色
+                    borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                    }
+                }
+                });
+
+          </script>
+          
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>

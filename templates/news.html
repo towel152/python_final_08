@@ -64,11 +64,22 @@
         .right{
         width: 950px; 
         height: 340px;
+        font-family: 'cwTeXFangSong', serif;
+        font-size: 22px;
           /* background-color:#00E3E3; */
         /* margin-top: 10px; */
         /* margin-left: 1px; */
         display: inline-block;
         }
+
+        .contentContent {
+        font-family: 'cwTeXFangSong', serif;
+        /* font-size: 20px; */
+        /* margin-top: 370px; */
+        /* padding-top: 300px; */
+        /* padding-left: 300px; */
+      }
+        
 
 
     </style>
@@ -99,9 +110,40 @@
     </div>
     
     <div class="right">
-      {% for item in data %}
-      {{ item.title}} <br>
-      {% endfor %} 
+      <!-- <div class="contentContent"> -->
+        <table class="table caption-top">
+          <caption>今日新聞</caption>
+          <!-- <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">First</th>
+              <th scope="col">Last</th>
+              <th scope="col">Handle</th>
+            </tr>
+          </thead> -->
+          <tbody>
+            {% for item in data %}
+              <tr>
+                <!-- <th scope="row">1</th> -->
+                <td>{{ item.title}} <br></td>
+              </tr>
+            {% endfor %} 
+            <!-- <tr>
+              <th scope="row">2</th>
+              <td>Jacob</td>
+              <td>Thornton</td>
+              <td>@fat</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td>Larry</td>
+              <td>the Bird</td>
+              <td>@twitter</td>
+            </tr> -->
+          </tbody>
+        </table>
+      <!-- </div> -->
+      
     </div>
 
 

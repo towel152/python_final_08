@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.0"></script>
+    <style>
+      @import url(https://fonts.googleapis.com/earlyaccess/cwtexfangsong.css);
+      .title {
+        margin: 0 auto;
+        font-family: 'cwTeXFangSong', serif;
+        font-size: 55px;
+        color: black;
+        padding-left: 365px;
+        line-height: 1.2;
+      }
+
+      .title2 {
+        margin: 0 auto;
+        font-family: 'cwTeXFangSong', serif;
+        font-size: 25px;
+        color: black;
+        padding-left: 400px;
+        line-height: 0.1;
+      }
+
+      .buttonHome {
+        padding: 15px 30px;
+        font-size: 25px;
+        margin: 0 auto;
+        font-family: 'cwTeXFangSong', serif;
+        border-top-right-radius: 9000px;
+        border-bottom-right-radius: 9000px;
+        background: #006030;
+        color: white;
+        text-decoration: none;
+      }
+
+      .buttonTopGap {
+        padding-top: 40px;
+      }
+
+      .buttonGap {
+        padding-top: 40px;
+      }
+
+      .contentTitle {
+        font-family: 'cwTeXFangSong', serif;
+        font-size: 25px;
+        padding-top: 200px;
+        padding-left: 100px;
+      }
+
+      .left {
+        width: 250px; 
+        height: 400px;
+        /* background-color:#00E3E3; */
+        margin-top: 10px;
+        display: inline-block;
+        position: fixed;
+        top: 100px;
+        left: 0;
+      }
+
+      .right {
+        width: 900px;
+        height: 350px;
+        margin-top: 40px;
+        display: inline-block;
+        margin-left: 250px; /* 將margin-left設為選單的寬度，以將圖表向右移動 */
+      }
+
+      .contentContent {
+        font-family: 'cwTeXFangSong', serif;
+      }
+    </style>
+  </head>
+  <body style="background-color:#F0F0F0;">
+    <div class="title"> 
+        <p>全台治安事件調查網</p>
+    </div> 
+    <div class="title2"> 
+        <p>Security incidents investigation website</p>
+    </div>
+    <div class="left">
+      <div class="buttonTopGap"> 
+        <a class="buttonHome" href="/home">首頁 home</a>
+      </div>
+      <div class="buttonGap"> 
+          <a class="buttonHome" href="/home">數據 data</a>
+      </div>
+      <div class="buttonGap"> 
+          <a class="buttonHome" href="/news">新聞 news</a>
+      </div>
+      <div class="buttonGap"> 
+          <a class="buttonHome" href="/about">關於我們 about us</a>
+      </div>
+      <div class="buttonGap"> 
+          <a class="buttonHome" href="/home">宣導提倡 advocate</a>
+      </div>
+    </div>
+    
+    <div class="right">
+        <form method="GET" action="{% url 'compare' %}">
+            <select name="year">
+              <option value="">全部年份</option>
+              {% for year in years %}
+              <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+              {% endfor %}
+            </select>
+            <select name="city1">
+              <option value="">第一個縣市</option>
+              {% for city in cities %}
+              <option value="{{ city.city }}" {% if city.city == selected_city_1 %}selected{% endif %}>{{ city.city }}</option>
+              {% endfor %}
+            </select>
+            <select name="city2">
+              <option value="">第二個縣市</option>
+              {% for city in cities %}
+              <option value="{{ city.city }}" {% if city.city == selected_city_2 %}selected{% endif %}>{{ city.city }}</option>
+              {% endfor %}
+            </select>
+            <input type="submit" value="篩選">
+          </form>
+          
+          <div>
+            <canvas id="myChart" width="800" height="300"></canvas>
+          </div>
+          
+    </div>
+
+    <script>
+      const ctx = document.getElementById('myChart');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [
+            {% for item in data %}
+            '{{ item.category }}',
+            {% endfor %}
+          ],
+          datasets: [
+            {
+              label: '{{ selected_city_1 }} 犯罪發生率',
+              data: [
+                {% for item in data %}
+                {{ item.crime_rate_1 }},
+                {% endfor %}
+              ],
+              backgroundColor: 'rgba(255, 99, 132, 0.5)', // 第一個數據集的顏色
+              borderWidth: 1
+            },
+            {
+              label: '{{ selected_city_2 }} 犯罪發生率',
+              data: [
+                {% for item in data %}
+                {{ item.crime_rate_2 }},
+                {% endfor %}
+              ],
+              backgroundColor: 'rgba(54, 162, 235, 0.5)', // 第二個數據集的顏色
+              borderWidth: 1
+            },
+            {
+              label: '{{ selected_city_1 }} 破獲率',
+              data: [
+                {% for item in data %}
+                {{ item.clearance_rate_1 }},
+                {% endfor %}
+              ],
+              backgroundColor: 'rgba(255, 99, 132, 0.5)', // 第三個數據集的顏色
+              borderWidth: 1
+            },
+            {
+              label: '{{ selected_city_2 }} 破獲率',
+              data: [
+                {% for item in data %}
+                {{ item.clearance_rate_2 }},
+                {% endfor %}
+              ],
+              backgroundColor: 'rgba(54, 162, 235, 0.5)', // 第四個數據集的顏色
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  </body>
+</html>
