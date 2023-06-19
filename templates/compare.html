@@ -112,17 +112,18 @@
               {% endfor %}
             </select>
             <select name="city1">
-              <option value="">第一個縣市</option>
-              {% for city in cities %}
-              <option value="{{ city.city }}" {% if city.city == selected_city_1 %}selected{% endif %}>{{ city.city }}</option>
-              {% endfor %}
-            </select>
-            <select name="city2">
-              <option value="">第二個縣市</option>
-              {% for city in cities %}
-              <option value="{{ city.city }}" {% if city.city == selected_city_2 %}selected{% endif %}>{{ city.city }}</option>
-              {% endfor %}
-            </select>
+                <option value="">全部縣市</option>
+                {% for city in cities %}
+                <option value="{{ city.city }}" {% if city.city == selected_city_1 %}selected{% endif %}>{{ city.city }}</option>
+                {% endfor %}
+              </select>
+              
+              <select name="city2">
+                <option value="">全部縣市</option>
+                {% for city in cities %}
+                <option value="{{ city.city }}" {% if city.city == selected_city_2 %}selected{% endif %}>{{ city.city }}</option>
+                {% endfor %}
+              </select>
             <input type="submit" value="篩選">
           </form>
           
@@ -176,7 +177,7 @@
             {
               label: '{{ selected_city_2 }} 破獲率',
               data: [
-                {% for item in data %}
+                {% for item in data  %}
                 {{ item.clearance_rate_2 }},
                 {% endfor %}
               ],

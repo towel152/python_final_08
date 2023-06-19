@@ -121,25 +121,34 @@ def compare(request):
     selected_city_2 = request.GET.get('city2')
 
     data = models.crimeData.objects.all()
+    data2 = models.crimeData.objects.all()
 
     if selected_year:
         data = data.filter(year=int(selected_year))
     if selected_city_1:
         data = data.filter(city=selected_city_1)
+    if selected_city_2:
+        data2 = data.filter(city=selected_city_2)
 
     p_data = models.populationData.objects.all()
+    p_data2 = models.populationData.objects.all()
 
     if selected_year:
         p_data = p_data.filter(year=int(selected_year))
     if selected_city_1:
         p_data = p_data.filter(city=selected_city_1)
+    if selected_city_2:
+        p_data2 = p_data2.filter(city=selected_city_2)
 
     # 獲取人口數據，將同一縣市的不同鄉鎮人口數相加
     population_data = p_data.values('city').annotate(total_population=Sum('quantity')).order_by('city')
-
     chart_data = data.values('category').annotate(
         quantity_1=Sum(Case(When(city=selected_city_1, then='quantity'), default=Value(0))),
         cleard_1=Sum(Case(When(city=selected_city_1, then='cleard'), default=Value(0))),
+    )
+
+    population_data2 = p_data2.values('city').annotate(total_population=Sum('quantity')).order_by('city')
+    chart_data2 = data2.values('category').annotate(
         quantity_2=Sum(Case(When(city=selected_city_2, then='quantity'), default=Value(0))),
         cleard_2=Sum(Case(When(city=selected_city_2, then='cleard'), default=Value(0))),
     )
@@ -147,24 +156,53 @@ def compare(request):
     # 將縣市的人口數據合併到犯罪數據中
     for item in chart_data:
         item['population_1'] = 0  # 設定預設值
-        item['population_2'] = 0  # 設定預設值
+        # item['population_2'] = 0  # 設定預設值
         city_data_1 = population_data.filter(city=selected_city_1)
-        city_data_2 = population_data.filter(city=selected_city_2)
+        # city_data_2 = population_data.filter(city=selected_city_2)
         if city_data_1.exists():
             item['population_1'] = city_data_1.values('total_population').first()['total_population']
+        # if city_data_2.exists():
+        #     item['population_2'] = city_data_2.values('total_population').first()['total_population']
+
+    # 將縣市的人口數據合併到犯罪數據中
+    for item in chart_data2:
+        # item['population_1'] = 0  # 設定預設值
+        item['population_2'] = 0  # 設定預設值
+        # city_data_1 = population_data.filter(city=selected_city_1)
+        city_data_2 = population_data2.filter(city=selected_city_2)
+        # if city_data_1.exists():
+        #     item['population_1'] = city_data_1.values('total_population').first()['total_population']
         if city_data_2.exists():
             item['population_2'] = city_data_2.values('total_population').first()['total_population']
 
     # 計算犯罪率和破獲率
     for item in chart_data:
         population_1 = item['population_1']
-        population_2 = item['population_2']
+        # population_2 = item['population_2']
         if population_1 != 0 and item['quantity_1'] != 0:  # 確保人口數和犯罪數都不為零
             item['crime_rate_1'] = (item['quantity_1'] / population_1) * 100000  # 犯罪率 = (犯罪數 / 人口數) * 100
             item['clearance_rate_1'] = (item['cleard_1'] / item['quantity_1']) * 100  # 破獲率 = (破獲數 / 犯罪數) * 100
         else:
             item['crime_rate_1'] = 0
             item['clearance_rate_1'] = 0
+
+        # if population_2 != 0 and item['quantity_2'] != 0:  # 確保人口數和犯罪數都不為零
+        #     item['crime_rate_2'] = (item['quantity_2'] / population_2) * 100000  # 犯罪率 = (犯罪數 / 人口數) * 100
+        #     item['clearance_rate_2'] = (item['cleard_2'] / item['quantity_2']) * 100  # 破獲率 = (破獲數 / 犯罪數) * 100
+        # else:
+        #     item['crime_rate_2'] = 0
+        #     item['clearance_rate_2'] = 0
+
+        # 計算犯罪率和破獲率
+    for item in chart_data2:
+        # population_1 = item['population_1']
+        population_2 = item['population_2']
+        # if population_1 != 0 and item['quantity_1'] != 0:  # 確保人口數和犯罪數都不為零
+        #     item['crime_rate_1'] = (item['quantity_1'] / population_1) * 100000  # 犯罪率 = (犯罪數 / 人口數) * 100
+        #     item['clearance_rate_1'] = (item['cleard_1'] / item['quantity_1']) * 100  # 破獲率 = (破獲數 / 犯罪數) * 100
+        # else:
+        #     item['crime_rate_1'] = 0
+        #     item['clearance_rate_1'] = 0
 
         if population_2 != 0 and item['quantity_2'] != 0:  # 確保人口數和犯罪數都不為零
             item['crime_rate_2'] = (item['quantity_2'] / population_2) * 100000  # 犯罪率 = (犯罪數 / 人口數) * 100
@@ -173,7 +211,7 @@ def compare(request):
             item['crime_rate_2'] = 0
             item['clearance_rate_2'] = 0
 
-    return render(request, "compare.html", {'years': years, 'cities': cities, 'selected_year': selected_year, 'selected_city_1': selected_city_1, 'selected_city_2': selected_city_2, 'data': chart_data})
+    return render(request, "compare.html", {'years': years, 'cities': cities, 'selected_year': selected_year, 'selected_city_1': selected_city_1, 'selected_city_2': selected_city_2, 'data': chart_data, 'data2': chart_data2})
 
 
 def news(request):
